@@ -1,0 +1,78 @@
+1.1) 
+#!bin/bash
+touch weights.txt
+for file in ./*dat; do
+        while read -r data; do
+                x=$data
+                y=$( echo "$x" | cut -d'k' -f1)
+                echo -e " $y" >> weights.txt
+        done < "$file"
+done
+sort -n weights.txt
+rm weights.txt
+
+What this script does is create a temp file to store the weights and then through a loop it'll read every line in each .dat file.
+We store said line in a variable that we then cut at the 'k' to only keep the number. We write the number in the temporary file we 
+created earlier. After reading every file we sort the weights in the file and display them. We end up eliminating the temporary file.
+
+1.2)
+#!/bin/bash
+touch lengths.txt
+for file in ./*dat; do
+        while read -r data; do
+                touch temp.txt
+                x=$data
+                echo "$x" >> temp.txt
+                y=$(awk '{print $2}' temp.txt)
+                z=$( echo "$y" | cut -d'm' -f1)
+                echo -e " $z" >> lengths.txt
+                rm temp.txt
+        done < "$file"
+done
+sort -rn lengths.txt
+rm lengths.txt
+
+Same as previous question. Created a temporary file to store the lengths. With a loop read every line in every .dat file in the directory. 
+Create a 2nd temporary file, store in it the line just read. With awk we keep the 2nd field corresponding to the length in a new variable. 
+Then we use cut to eliminate the 'm' character. We store the number in the length.dat file we first created and remove the 2nd temp file
+created. Once we've finished reading all the files we sort our length.dat file and display the lengths. We finish by removing the length file.
+
+1.3)
+i#!/bin/bash
+
+x=$(awk -F"k" '{print $1}' elephant.dat)
+y=$(awk -F"k" '{print $1}' hippopotamus.dat)
+if [ $x -gt $y ]
+        then
+                echo 'Elephant is bigger'
+        else
+                if [ $x -lt $y ]
+                        then
+                                echo 'Hippopotamus is bigger'
+                        else
+                                echo 'Both are the same weight'
+                fi
+fi
+
+We store in 2 variables the weights number from the elephant and hippopotamus files. We use swk to remove all the characters after the
+number(i.e kg ___m). Using an if structure we compare the weights and display accordingly which weights more.
+
+1.4)
+#!/bin/bash
+
+x=$(awk -F"k" '{print $1}' crocodile.dat)
+let "y=x"
+let "x=x+2"
+chmod g+r crocodile.dat
+sed  "s/$y/$x/g" crocodile.dat >crocodiles.dat
+mv crocodiles.dat crocodile.dat
+
+We use awk to get the number represeentation of the crocodile's weight, (cutting kg ___m). We store this is a variable. We make a copy of 
+said variable. We add 2 to the original variable. Use chmod to change permissions on the file (in case writing permissions aren't enabled). 
+We use sed to replace the original weight by the new increased weight and write the new string in a crocodiles.dat file. Using mv command
+we can effectively replace the original crocodile.dat by the new modified crocodiles.dat while renaming the latter to match the original 
+name.
+
+1.5) rm -r giraffe*
+
+Use rm command with -r (recursive) and a wildcard. The latter tells the command to remove everything that has "giraffe" written in it.

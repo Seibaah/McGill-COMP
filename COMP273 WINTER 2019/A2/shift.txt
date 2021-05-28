@@ -1,0 +1,19 @@
+This circuit consists of 9 rising edge D Flip-flops (DFF), 9 multiplexers (MX), 2 decoders (DCD) and 1 AND gate. 
+
+8 DFFs are used for the 8 bit register, each one connected to it's own MX. 
+
+A clock is connected in series to all the DFFs. A 2 bit input is also connected in series to all the MXs. Each MX is wired to the data input of it's own DFF.
+
+An i-th bit register MX has 4 possible inputs. The 0-input is wired to the current bit in the register of the same position. Like overwriting with
+the current data; an alternative would've been leaving it unconnected. In both cases the data keeps the same values. 1-input is wired to the 
+value of the register in the i+1 (shift right); for the edge case A7 the wire is connected to the input bit. 2-input in thx MX is the opposite (shift left). 
+The wire runs to the value of the register in the i-1 position. The edge case occurs in A0, where the wire runs to the input bit.
+Case 3 is a circular shift to the right. With the exception of A7, which is wired to A0, the other bits are wired just like 1-input (take the value from the bit to their left). 
+
+On the left we have an extra DFF and MX. This serves to store the output bit. When we shift L or R we kick out a bit. This is stored here. This MX is wired to A7 & A0
+and depending on the operation input it'll store the kicked out bit from either corresponding edge.
+
+Underneath, we find a DCD. This one serves to direct b_in. It's also wired to the 2 bit operation line and depending on it it will decide where the input needs to fill in.
+
+Finally, on the right we have another DCD and the AND gate. This only takes the kicked bit when shifting right circularly and sends it back to A7. The decoder only enables
+this when the 2 bit signal is 1-1.

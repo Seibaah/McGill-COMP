@@ -1,0 +1,34 @@
+My checkers program has a special class called a TileLock which has 3 attributes:
+	an atomic boolean called lock
+	a Piece reference called owner
+	a Piece reference called sub
+
+These are their functionality
+	lock-> if a piece is on the tile or not
+ 	owner-> the piece that owns and whose operations can't be interrupted for that tile
+ 	sub-> piece on the tile but that can be interrupted or captured
+
+The program has a move compute step in which diagonally adjacent tiles are check for possible moves.
+Possible moves are added to a list of actions which are tested in the move method. The lists are
+shuffled to add a random effect, but captures are prioritized.
+
+Inside move there are many calls to different synchronized methods that operate of a Tile.
+Before moving a tile attempts to lock itself, this is like activating an invinvibility state
+where the piece can't be interrupted or captured. If this fails then the piece has been captured and
+a respawn command is issued.
+
+On a capture move, after locking your own tile the piece tries to lock the tile to move to when performing
+a capture. If the operation fails then it tries a different capture action if possible. If the action 
+succeeds then it attempts to lock the tile where the piece we want to capture is. If this fails then the 
+move tile is released and a new action will be tested. If this succeeds to then we can perform our move safely.
+
+The same logic applies to a simple move except we have to perform one less sync call to a tile. If no moves can
+be performed the piece gives up invincibilty state and goes to sleep.
+
+If any move succeded then we don't try more moves; we give up invincibilty state go to sleep.
+
+Every get, test or modification to any tile is done through sync methods on the tiles, so no races happen.
+What's more data overwrite can't happen because any data write is hidden behind a state test, like compareAndSet.
+
+Lastly, every tile is restored to a defined state so that no tile is left in a corrupted state that could block
+piece moves.

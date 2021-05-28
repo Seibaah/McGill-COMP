@@ -1,0 +1,57 @@
+
+
+1)The program prints 10 times "Line # X" where X corresponds to a number from 1 to 9. Eeach print happens in a new line like a carriage return would do but without using this function. Then the program waits for a valid input. A valid input is a number from 0 to 9. If the input isn't valid nothing happens but if it is valid it proceeds to print 'n' columns where 'n' is the user input. The print output is "Column #X" where X goes from 1 to 'n'. Once done the program waits for a keyboard hit to terminate. 
+
+2)
+#include <stdio.h>		//include standard io library
+#include <conio.h>		//include console io library
+
+int main()				//main function
+{
+	int i, j, times;	//var declaration: i and j are used as coordinates for gotoxy later in the program,
+						// times will be used to store the digit the user input to draw the correct number of columns
+	char c;				//Var that will store the user input character
+
+	// clear screen
+	clrscr();			//predefined function in conio.h to clear the console screen
+
+	// label first 10 lines
+	for( i = 1; i <= 10; i++ )		//loop to print 10 lines
+	{
+		gotoxy( 1, i );				//goto x=1 y=i -> initial coordinate of every line print
+		printf( "Line # %d", i );	//print the message
+	}
+
+	// prompt for a digit, retrieve digit with getch()
+	gotoxy(1,12);					//go to x=1, y=12 (under the 10 lines print)
+	printf("Press any digit to continue...");	//print prompt message for user
+	do								//do while to ensure code inside executes at least once
+	{
+		gotoxy(1,13);				//go to x=1, y=13
+		c = getch();				//get user character input
+	}
+	while ( c < '0' || c > '9' );	//if the input isn't a digit between 0 and 9 (inclusive) then keep reading user input
+									//until it is valid
+
+
+	// append "..again" to every line up to 9 times
+	times = (int) c - '0';			//since we are reading chars 0 is read as 48, 1 as 39, etc. Therefore to print 1, 2, 3 or more times
+									//it is necessary to perform a subtraction to convert from char to int
+	for( j = 1; j <= times; j++ )	//outer loop to print 'j' columns
+	{
+		for( i = 1; i <= 10; i++ )	//inner loop to print 10 lines within a column
+		{
+			gotoxy( j*11, i );			//suing loop variable values the print coordinate is fixed
+			printf( "column #%d", j );	//print the message
+		}
+	}
+
+	// wait for a key press using khbit(), then exit
+	gotoxy(1,13);						//go to x=1, y=13 (below every previously printed message)
+	printf("Press any key to continue...");	//print final prompt message
+	while( !kbhit() );					//while loop that runs as long as no key on the keyboard is hit. Hitting a key exits the loop
+										//ending the program
+
+
+	return 0;							//return success status (0) and finish execution
+}
